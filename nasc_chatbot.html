@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NASC Chatbot</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: url("C:/Users/harir/Downloads/nasc1.jpg") no-repeat center center fixed;
+      background-size: cover;
+      overflow-x: hidden;
+    }
+    .chatbot-container {
+      width: 800px;
+      height: 650px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      display: flex;
+      flex-direction: column;
+    }
+    .chat-header {
+      background-color: #c40d08;
+      color: white;
+      padding: 10px;
+      border-radius: 10px 10px 0 0;
+      font-size: 18px;
+      text-align: center;
+    }
+    .chat-body {
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+      
+    }
+    .chat-footer {
+      display: flex;
+      padding: 10px;
+      border-top: 1px solid #ccc;
+    }
+    .chat-footer input {
+      flex: 1;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin-right: 5px;
+    }
+    .chat-footer button {
+      padding: 8px 15px;
+      background: #e55c08;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .chat-footer button:hover {
+      background: #0056b3;
+    }
+    .message {
+      margin: 5px 0;
+    }
+    .bot-message {
+      background: rgba(233,233,233,0.8);
+      padding: 8px;
+      border-radius: 5px;
+      max-width: 80%;
+    }
+    .user-message {
+      background: #c40d08;
+      color: white;
+      padding: 8px;
+      border-radius: 5px;
+      max-width: 80%;
+      margin-left: auto;
+    }
+    .menu-buttons {
+      margin-top: 5px;
+    }
+    .menu-buttons button {
+      margin: 2px;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      background-color: #eb4a05;
+      color: white;
+    }
+    .menu-buttons button:hover {
+      background-color: #dd5704;
+    }
+  </style>
+</head>
+<body>
+  <div class="chatbot-container">
+    <div class="chat-header">NASC Chatbot</div>
+    <div class="chat-body" id="chat-body">
+      <div class="message bot-message">
+        Welcome to Nehru Arts and Science College Chatbot! How can I assist you?<br>
+        Type "menu" to get started.
+      </div>
+    </div>
+    <div class="chat-footer">
+      <input type="text" id="user-input" placeholder="Type your message here..." />
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+
+  <script>
+    const chatBody = document.getElementById("chat-body");
+    const userInput = document.getElementById("user-input");
+
+    let currentContext = "menu"; 
+
+    const chatbotData = {
+      menu: `Please choose an option :(1,2,3,4,5,6)<br>
+        1. Admissions<br>2. Courses<br>3. Fees Structure<br>
+        4. Facilities<br>5. Contact Information<br>6. Milestones of NASC`,
+      admissions: `Admissions Menu:<br>- Eligibility<br>- Application Process<br>- Important Dates<br>- Contact for Admissions`,
+      courses: `Courses Menu:<br>- Undergraduate Programs (Type 'UG')<br>- Postgraduate Programs (Type 'PG')<br>- PhD Programs (Type 'phd')`,
+      fees: `FEES DETAILS:<br>Contact: <a href="mailto:nascoffice@gmail.com">nascoffice@gmail.com</a> or +91 73589 99256`,
+      facilities: `Campus Facilities:<br>* Tobacco Free Campus<br>* No-Ragging Campus<br>* Library<br>* Digital Lab<br>* Green Campus<br>* Discipline Committee<br>* Hostel for both boys and girls<br>* Gym<br>* Placements<br>* Bridge courses and more...`,
+      contact: `Contact Information:<br>- General Inquiry: <a href="mailto:info@nasc.com">info@nasc.com</a><br>- Admission Office: <a href="mailto:admissions@nasc.com">admissions@nasc.com</a><br>- Phone: +91 9876543210`,
+      ug: `Undergraduate Programs:<br>- B.Sc. (Computer Science, Biotechnology, Microbiology, Forensic Science, CDF, IOT, AIML, CSDS, DCFS, BCA, Digital Forensic Science, Hotel Management, FSN)<br>- BBA (General, International Business, Computer Application, Logistics)<br>- B.Com (Finance, Computer Applications, IT, Aviation Management)<br>- B.A (Criminology, English)`,
+      pg: `Postgraduate Programs:<br>- M.Sc. (Computer Science, Biotechnology, Microbiology, Data Science, Forensic Science)<br>- MSW<br>- M.Com (Finance and Control)<br>- M.A (English)`,
+      phd: `PhD Programs:<br>- Available in all Streams.`,
+      milestones: `Milestones of NASC:<br>- 1998: Established<br>- 2014: NAAC II Cycle A Grade 3.10 CGPA<br>- 2016: Nature Conservation Award<br>- 2017: Autonomous Status<br>- 2018: Best College - Indy Wood Award<br>- 2019: Bharathiar University Ranks - 60 with 10 Gold Medals<br>- 2022: Best Green Campus Award by Nature Science Foundation`,
+      eligibility: `Eligibility:<br>- Must have passed 12th Board Exam without any black mark.`,
+      "application process": `For application process contact:<br>- General Inquiry: <a href="mailto:info@nasc.com">info@nasc.com</a><br>- Admission Office: <a href="mailto:admissions@nasc.com">admissions@nasc.com</a><br>- Phone: +91 9876543210`,
+      "important dates": `Important Dates:<br>- 09/06: Founder's Memorial Day<br>- 15/08: Independence Day<br>- 29/08: Esistenza TN<br>- 30/08: Esistenza Kerala<br>- 12/09: Onam celebrations<br>- 02/10: Gandhi Jayanthi<br>- 24/12: Christmas Celebrations<br>- 10/01: Pongal Celebrations<br>- 08/03: Women's Day<br>- 25/09: Fantablous<br>- 26/09: Festember`,
+      "thank you": `Glad I could help!<br>Feel free to ask for more assistance.`
+    };
+
+    const aliases = {
+      "1": "admissions",
+      "2": "courses",
+      "3": "fees",
+      "4": "facilities",
+      "5": "contact",
+      "6": "milestones",
+    };
+
+    function sendMessage() {
+      const userText = userInput.value.trim();
+      if (!userText) return;
+
+      addMessage(userText, "user-message");
+      const response = getResponse(userText);
+      setTimeout(() => addMessage(response, "bot-message", currentContext), 300);
+
+      userInput.value = "";
+    }
+
+    function addMessage(text, className, context) {
+      const messageDiv = document.createElement("div");
+      messageDiv.className = `message ${className}`;
+      messageDiv.innerHTML = text;
+
+
+      const menuDiv = document.createElement("div");
+      menuDiv.className = "menu-buttons";
+
+      if (context === "menu" || context === "main") {
+        menuDiv.innerHTML = `
+          <button onclick="sendButton('1')">1. Admissions</button>
+          <button onclick="sendButton('2')">2. Courses</button>
+          <button onclick="sendButton('3')">3. Fees</button>
+          <button onclick="sendButton('4')">4. Facilities</button>
+          <button onclick="sendButton('5')">5. Contact</button>
+          <button onclick="sendButton('6')">6. Milestones</button>
+        `;
+      } else if (context === "courses") {
+        menuDiv.innerHTML = `
+          <button onclick="sendButton('UG')">UG Programs</button>
+          <button onclick="sendButton('PG')">PG Programs</button>
+          <button onclick="sendButton('phd')">PhD Programs</button>
+        `;
+      } else if (context === "admissions") {
+        menuDiv.innerHTML = `
+          <button onclick="sendButton('Eligibility')">Eligibility</button>
+          <button onclick="sendButton('Application Process')">Application Process</button>
+          <button onclick="sendButton('Important Dates')">Important Dates</button>
+        `;
+      }
+
+      if (menuDiv.innerHTML) messageDiv.appendChild(menuDiv);
+      chatBody.appendChild(messageDiv);
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    function sendButton(value) {
+      userInput.value = value;
+    
+      if (["1","admissions"].includes(value.toLowerCase())) currentContext = "admissions";
+      else if (["2","courses"].includes(value.toLowerCase())) currentContext = "courses";
+      else currentContext = "main";
+
+      sendMessage();
+    }
+
+    function getResponse(input) {
+      input = input.toLowerCase();
+      const key = aliases[input] || input;
+      return chatbotData[key] || "I'm sorry, I didn't understand that. Please type 'menu' to see the options.";
+    }
+
+    userInput.addEventListener("keypress", function(event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        sendMessage();
+      }
+    });
+  </script>
+</body>
+</html>
+ 
